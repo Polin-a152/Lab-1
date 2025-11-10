@@ -99,7 +99,10 @@ void cmd_JUMP(char *dir, int n) {
     for (int i = 0; i < n; i++) {
         x = (x + dx + width) % width;
         y = (y + dy + height) % height;
-        if (field[y][x] == MNT) break;
+        if (field[y][x] == MNT  field[y][x] == TREE  field[y][x] == STONE) {
+            printf("Предупреждение: препятствие во время прыжка.\n");
+            return;
+        }
     }
     if (field[y][x] == PIT) {
         printf("Ошибка: приземление в яму.\n");
@@ -108,6 +111,95 @@ void cmd_JUMP(char *dir, int n) {
     field[dinoY][dinoX] = EMPTY;
     dinoX = x; dinoY = y;
     field[dinoY][dinoX] = DINO;
+}
+
+// Создаёт дерево (&)
+void cmd_GROW(char *dir) {
+    int nx = dinoX, ny = dinoY;
+    if (!strcmp(dir, "UP")) ny--;
+    else if (!strcmp(dir, "DOWN")) ny++;
+    else if (!strcmp(dir, "LEFT")) nx--;
+    else if (!strcmp(dir, "RIGHT")) nx++;
+    if (nx < 0) nx = width - 1;
+    if (ny < 0) ny = height - 1;
+    if (nx >= width) nx = 0;
+    if (ny >= height) ny = 0;
+    if (field[ny][nx] == EMPTY)
+        field[ny][nx] = TREE;
+    else
+        printf("Ошибка: дерево можно посадить только в пустой клетке.\n");
+}
+
+// Срубает дерево (&)
+void cmd_CUT(char *dir) {
+    int nx = dinoX, ny = dinoY;
+    if (!strcmp(dir, "UP")) ny--;
+    else if (!strcmp(dir, "DOWN")) ny++;
+    else if (!strcmp(dir, "LEFT")) nx--;
+    else if (!strcmp(dir, "RIGHT")) nx++;
+    if (nx < 0) nx = width - 1;
+    if (ny < 0) ny = height - 1;
+if (nx >= width) nx = 0;
+    if (ny >= height) ny = 0;
+    if (field[ny][nx] == TREE)
+        field[ny][nx] = EMPTY;
+    else
+        printf("Ошибка: рядом нет дерева для срубания.\n");
+}
+
+// Создаёт камень (@)
+void cmd_MAKE(char *dir) {
+    int nx = dinoX, ny = dinoY;
+    if (!strcmp(dir, "UP")) ny--;
+    else if (!strcmp(dir, "DOWN")) ny++;
+    else if (!strcmp(dir, "LEFT")) nx--;
+    else if (!strcmp(dir, "RIGHT")) nx++;
+    if (nx < 0) nx = width - 1;
+    if (ny < 0) ny = height - 1;
+    if (nx >= width) nx = 0;
+    if (ny >= height) ny = 0;
+    if (field[ny][nx] == EMPTY)
+        field[ny][nx] = STONE;
+    else
+        printf("Ошибка: нельзя создать камень не на пустой клетке.\n");
+}
+
+// Пинает камень (@)
+void cmd_PUSH(char *dir) {
+    int nx = dinoX, ny = dinoY;
+    if (!strcmp(dir, "UP")) ny--;
+    else if (!strcmp(dir, "DOWN")) ny++;
+    else if (!strcmp(dir, "LEFT")) nx--;
+    else if (!strcmp(dir, "RIGHT")) nx++;
+    if (nx < 0) nx = width - 1;
+    if (ny < 0) ny = height - 1;
+    if (nx >= width) nx = 0;
+    if (ny >= height) ny = 0;
+
+    if (field[ny][nx] != STONE) {
+        printf("Ошибка: рядом нет камня для пинка.\n");
+        return;
+    }
+
+    int tx = (nx + (nx - dinoX) + width) % width;
+    int ty = (ny + (ny - dinoY) + height) % height;
+
+    if (field[ty][tx] == TREE || field[ty][tx] == MNT) {
+        printf("Предупреждение: камень не может пройти через препятствие.\n");
+        return;
+    }
+
+    if (field[ty][tx] == PIT) {
+        field[ty][tx] = EMPTY;
+        field[ny][nx] = EMPTY;
+        printf("Камень засыпал яму.\n");
+        return;
+    }
+
+    if (field[ty][tx] == EMPTY) {
+        field[ty][tx] = STONE;
+        field[ny][nx] = EMPTY;
+    }
 }
 
 // Разбирает и вызывает нужную команду
@@ -136,6 +228,18 @@ int exec_command_line(const char *line, int lineno) {
     } else if (!strcmp(cmd, "JUMP")) {
         char dir[10]; int n; sscanf(line, "%*s %s %d", dir, &n);
         cmd_JUMP(dir, n);
+    } else if (!strcmp(cmd, "GROW")) {
+        char dir[10]; sscanf(line, "%*s %s", dir);
+        cmd_GROW(dir);
+    } else if (!strcmp(cmd, "CUT")) {
+        char dir[10]; sscanf(line, "%*s %s", dir);
+        cmd_CUT(dir);
+    } else if (!strcmp(cmd, "MAKE")) {
+        char dir[10]; sscanf(line, "%*s %s", dir);
+        cmd_MAKE(dir);
+    } else if (!strcmp(cmd, "PUSH")) {
+        char dir[10]; sscanf(line, "%*s %s", dir);
+        cmd_PUSH(dir);
     } else {
         printf("Неизвестная команда в строке %d: %s\n", lineno, cmd);
         return -1;
