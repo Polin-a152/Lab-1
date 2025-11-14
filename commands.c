@@ -244,63 +244,162 @@ void cmd_PUSH(char *dir) {
 
 // Разбирает и вызывает нужную команду
 int exec_command_line(const char *line, int lineno) {
+
     char cmd[32];
-    if (sscanf(line, "%31s", cmd) != 1) return 0;
+
+    if (sscanf(line, "%31s", cmd) != 1)
+        return 0;
 
     if (!strcmp(cmd, "SIZE")) {
-        int w, h; sscanf(line, "%*s %d %d", &w, &h);
-        cmd_SIZE(w, h);
-    } else if (!strcmp(cmd, "START")) {
-        int x, y; sscanf(line, "%*s %d %d", &x, &y);
-        cmd_START(x, y);
-    } else if (!strcmp(cmd, "MOVE")) {
-        char dir[20], extra[20];
-        int count = sscanf(line, "%*s %19s %19s", dir, extra);
-        if (count != 1) {
-            printf("Ошибка: неверное количество аргументов в MOVE (нужен один аргумент — направление).\n");
-            return -1;
-        }
-        cmd_MOVE(dir);
+        int w, h, end;
+        char extra;
 
-    } else if (!strcmp(cmd, "PAINT")) {
-        char color;
-        char extra[20];
-        // прочитать основной аргумент и попытаться прочитать второй
-        int count = sscanf(line, "%*s %c %19s", &color, extra);
-        if (count != 1) {
-            printf("Ошибка: неверное количество аргументов в PAINT (нужен один символ цвета).\n");
+        int count = sscanf(line, "%*s %d %d %n%c", &w, &h, &end, &extra);
+        if (count != 2 || line[end] != '\0') {
+            printf("Ошибка: SIZE требует два числа.\n");
             return -1;
         }
+
+        cmd_SIZE(w, h);
+    }
+
+    else if (!strcmp(cmd, "START")) {
+        int x, y, end;
+        char extra;
+
+        int count = sscanf(line, "%*s %d %d %n%c", &x, &y, &end, &extra);
+        if (count != 2 || line[end] != '\0') {
+            printf("Ошибка: START требует два числа.\n");
+            return -1;
+        }
+
+        cmd_START(x, y);
+    }
+
+    else if (!strcmp(cmd, "MOVE")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: MOVE требует одно направление.\n");
+            return -1;
+        }
+
+        cmd_MOVE(dir);
+    }
+
+    else if (!strcmp(cmd, "PAINT")) {
+        char color, extra;
+        int end;
+
+        int count = sscanf(line, "%*s %c %n%c", &color, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: PAINT требует один символ.\n");
+            return -1;
+        }
+
         cmd_PAINT(color);
-    } else if (!strcmp(cmd, "DIG")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+    }
+
+    else if (!strcmp(cmd, "DIG")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: DIG требует одно направление.\n");
+            return -1;
+        }
+
         cmd_DIG(dir);
-    } else if (!strcmp(cmd, "MOUND")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+    }
+
+    else if (!strcmp(cmd, "MOUND")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: MOUND требует одно направление.\n");
+            return -1;
+        }
+
         cmd_MOUND(dir);
-    } else if (!strcmp(cmd, "JUMP")) {
-        char dir[10]; int n; sscanf(line, "%*s %s %d", dir, &n);
-        cmd_JUMP(dir, n);
-    } else if (!strcmp(cmd, "GROW")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+    }
+
+    else if (!strcmp(cmd, "GROW")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: GROW требует одно направление.\n");
+            return -1;
+        }
+
         cmd_GROW(dir);
-    } else if (!strcmp(cmd, "CUT")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+    }
+
+    else if (!strcmp(cmd, "CUT")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: CUT требует одно направление.\n");
+            return -1;
+        }
+
         cmd_CUT(dir);
-    } else if (!strcmp(cmd, "MAKE")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+    }
+
+    else if (!strcmp(cmd, "MAKE")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: MAKE требует одно направление.\n");
+            return -1;
+        }
+
         cmd_MAKE(dir);
-    } else if (!strcmp(cmd, "PUSH")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+    }
+
+    else if (!strcmp(cmd, "PUSH")) {
+        char dir[20], extra;
+        int end;
+
+        int count = sscanf(line, "%*s %19s %n%c", dir, &end, &extra);
+        if (count != 1 || line[end] != '\0') {
+            printf("Ошибка: PUSH требует одно направление.\n");
+            return -1;
+        }
+
         cmd_PUSH(dir);
-    } else {
-        printf("Неизвестная команда в строке %d: %s\n", lineno, cmd);
+    }
+
+    else if (!strcmp(cmd, "JUMP")) {
+        char dir[20], extra;
+        int n, end;
+
+        int count = sscanf(line, "%*s %19s %d %n%c", dir, &n, &end, &extra);
+        if (count != 2 || line[end] != '\0') {
+            printf("Ошибка: JUMP требует направление и число.\n");
+            return -1;
+        }
+
+        cmd_JUMP(dir, n);
+    }
+
+    else {
+        printf("Ошибка: неизвестная команда '%s'.\n", cmd);
         return -1;
     }
+
     return 0;
 }
-
-
 
 
 
