@@ -42,9 +42,10 @@ void cmd_MOVE(char *dir) {
     int newX = (dinoX + dx + width) % width;
     int newY = (dinoY + dy + height) % height;
     if (field[newY][newX] == PIT) {
-        printf("Ошибка: динозавр упал в яму!\n");
+        printf("Ошибка: дино упал в яму!\n");
         exit(1);
     }
+    //Живой 
     if (field[newY][newX] == MNT  field[newY][newX] == TREE  field[newY][newX] == STONE) {
         printf("Предупреждение: препятствие впереди.\n");
         return;
@@ -254,6 +255,7 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
 
