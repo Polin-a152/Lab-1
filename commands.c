@@ -10,7 +10,7 @@ void cmd_SIZE(int w, int h) {
         printf("Ошибка: неверные размеры.\n");
         exit(1);
     }
-    //нет ошибки
+    //нет ошиб
     width = w;
     height = h;
     for (int y = 0; y < h; y++)
@@ -24,6 +24,7 @@ void cmd_START(int x, int y) {
         printf("Ошибка: динозавр вне поля.\n");
         exit(1);
     }
+    // нет ошиб
     field[y][x] = DINO;
     dinoX = x; dinoY = y;
     hasStart = 1;
@@ -247,5 +248,6 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
