@@ -6,7 +6,7 @@
 
 // Создаёт новое поле
 void cmd_SIZE(int w, int h) {
-    if (w <= 0  h <= 0  w > MAX || h > MAX) {
+    if (w <= 0 || h <= 0 || w > MAX || h > MAX) {
         printf("Ошибка: неверные размеры.\n");
         exit(1);
     }
@@ -19,7 +19,7 @@ void cmd_SIZE(int w, int h) {
 
 // Ставит динозавра в указанную позицию
 void cmd_START(int x, int y) {
-    if (x < 0  y < 0  x >= width || y >= height) {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
         printf("Ошибка: динозавр вне поля.\n");
         exit(1);
     }
@@ -246,3 +246,4 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
