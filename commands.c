@@ -10,6 +10,7 @@ void cmd_SIZE(int w, int h) {
         printf("Ошибка: неверные размеры.\n");
         exit(1);
     }
+    //нет ошибки
     width = w;
     height = h;
     for (int y = 0; y < h; y++)
@@ -246,4 +247,5 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
