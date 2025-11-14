@@ -139,7 +139,7 @@ void cmd_JUMP(char *dir, int n) {
     for (int i = 0; i < n; i++) {
         x = (x + dx + width) % width;
         y = (y + dy + height) % height;
-        if (field[y][x] == MNT  field[y][x] == TREE  field[y][x] == STONE) {
+        if (field[y][x] == MNT || field[y][x] == TREE || field[y][x] == STONE) {
             printf("Предупреждение: препятствие во время прыжка.\n");
             return;
         }
@@ -299,6 +299,7 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
 
