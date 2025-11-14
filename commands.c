@@ -64,15 +64,52 @@ void cmd_PAINT(char color) {
 // Делает яму в выбранном направлении
 void cmd_DIG(char *dir) {
     int nx = dinoX, ny = dinoY;
+
+    // Определяем направление
     if (!strcmp(dir, "UP")) ny--;
     else if (!strcmp(dir, "DOWN")) ny++;
     else if (!strcmp(dir, "LEFT")) nx--;
     else if (!strcmp(dir, "RIGHT")) nx++;
+    else {
+        printf("Ошибка: неверное направление в DIG.\n");
+        return;
+    }
+
+    // Обход границ (телепорт через край)
     if (nx < 0) nx = width - 1;
     if (ny < 0) ny = height - 1;
     if (nx >= width) nx = 0;
     if (ny >= height) ny = 0;
+
+    // Проверки, что в этой клетке можно копать
+    if (field[ny][nx] == DINO) {
+        printf("Ошибка: нельзя копать яму под динозавром!\n");
+        return;
+    }
+
+    if (field[ny][nx] == PIT) {
+        printf("Ошибка: здесь уже есть яма.\n");
+        return;
+    }
+
+    if (field[ny][nx] == MNT) {
+        printf("Ошибка: нельзя копать яму в горе.\n");
+        return;
+    }
+
+    if (field[ny][nx] == TREE) {
+        printf("Ошибка: нельзя копать яму в дереве.\n");
+        return;
+    }
+
+    if (field[ny][nx] == STONE) {
+        printf("Ошибка: нельзя копать яму в камне.\n");
+        return;
+    }
+
+    // создаём яму
     field[ny][nx] = PIT;
+    printf("Яма создана в направлении %s.\n", dir);
 }
 
 // Делает гору в направлении, может засыпать яму
@@ -262,6 +299,7 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
 
