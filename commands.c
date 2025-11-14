@@ -226,8 +226,15 @@ int exec_command_line(const char *line, int lineno) {
         cmd_MOVE(dir);
 
     } else if (!strcmp(cmd, "PAINT")) {
-        char c; sscanf(line, "%*s %c", &c);
-        cmd_PAINT(c);
+        char color;
+        char extra[20];
+        // прочитать основной аргумент и попытаться прочитать второй
+        int count = sscanf(line, "%*s %c %19s", &color, extra);
+        if (count != 1) {
+            printf("Ошибка: неверное количество аргументов в PAINT (нужен один символ цвета).\n");
+            return -1;
+        }
+        cmd_PAINT(color);
     } else if (!strcmp(cmd, "DIG")) {
         char dir[10]; sscanf(line, "%*s %s", dir);
         cmd_DIG(dir);
@@ -255,6 +262,7 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
 
