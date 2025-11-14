@@ -216,8 +216,14 @@ int exec_command_line(const char *line, int lineno) {
         int x, y; sscanf(line, "%*s %d %d", &x, &y);
         cmd_START(x, y);
     } else if (!strcmp(cmd, "MOVE")) {
-        char dir[10]; sscanf(line, "%*s %s", dir);
+        char dir[20], extra[20];
+        int count = sscanf(line, "%*s %19s %19s", dir, extra);
+        if (count != 1) {
+            printf("Ошибка: неверное количество аргументов в MOVE (нужен один аргумент — направление).\n");
+            return -1;
+        }
         cmd_MOVE(dir);
+
     } else if (!strcmp(cmd, "PAINT")) {
         char c; sscanf(line, "%*s %c", &c);
         cmd_PAINT(c);
@@ -248,6 +254,7 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
 
