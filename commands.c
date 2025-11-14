@@ -46,7 +46,7 @@ void cmd_MOVE(char *dir) {
         exit(1);
     }
     //Живой, обход горы, дерева, камня 
-    if (field[newY][newX] == MNT  field[newY][newX] == TREE  field[newY][newX] == STONE) {
+    if (field[newY][newX] == MNT || field[newY][newX] == TREE || field[newY][newX] == STONE) {
         printf("Предупреждение: препятствие впереди.\n");
         return;
     }
@@ -255,6 +255,7 @@ int exec_command_line(const char *line, int lineno) {
     }
     return 0;
 }
+
 
 
 
