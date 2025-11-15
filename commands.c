@@ -11,6 +11,7 @@ void cmd_SIZE(int w, int h) {
         exit(1);
     }
     //нет ошиб
+    undo_push(); 
     width = w;
     height = h;
     for (int y = 0; y < h; y++)
@@ -25,6 +26,7 @@ void cmd_START(int x, int y) {
         exit(1);
     }
     // нет ошиб
+    undo_push(); 
     field[y][x] = DINO;
     dinoX = x; dinoY = y;
     hasStart = 1;
@@ -32,6 +34,7 @@ void cmd_START(int x, int y) {
 
 // Двигает динозавра на одну клетку
 void cmd_MOVE(char *dir) {
+    undo_push(); 
     int dx = 0, dy = 0;
     if (!strcmp(dir, "UP")) dy = -1;
     else if (!strcmp(dir, "DOWN")) dy = 1;
@@ -45,7 +48,7 @@ void cmd_MOVE(char *dir) {
         printf("Ошибка: дино упал в яму!\n");
         exit(1);
     }
-    //Живой, обход горы, дерева, камня 
+    //Живой, обход 
     if (field[newY][newX] == MNT || field[newY][newX] == TREE || field[newY][newX] == STONE) {
         printf("Предупреждение: препятствие впереди.\n");
         return;
@@ -57,12 +60,14 @@ void cmd_MOVE(char *dir) {
 
 // Красит клетку, где стоит динозавр
 void cmd_PAINT(char color) {
+    undo_push(); 
     field[dinoY][dinoX] = color;
     printf("Клетка окрашена в '%c'\n", color);
 }
 
 // Делает яму в выбранном направлении
 void cmd_DIG(char *dir) {
+    undo_push(); 
     int nx = dinoX, ny = dinoY;
 
     // Определяем направление
@@ -114,6 +119,7 @@ void cmd_DIG(char *dir) {
 
 // Делает гору в направлении, может засыпать яму
 void cmd_MOUND(char *dir) {
+    undo_push(); 
     int nx = dinoX, ny = dinoY;
     if (!strcmp(dir, "UP")) ny--;
     else if (!strcmp(dir, "DOWN")) ny++;
@@ -129,6 +135,7 @@ void cmd_MOUND(char *dir) {
 
 // Прыжок динозавра
 void cmd_JUMP(char *dir, int n) {
+    undo_push(); 
     int dx = 0, dy = 0;
     if (!strcmp(dir, "UP")) dy = -1;
     else if (!strcmp(dir, "DOWN")) dy = 1;
@@ -155,6 +162,7 @@ void cmd_JUMP(char *dir, int n) {
 
 // Создаёт дерево (&)
 void cmd_GROW(char *dir) {
+    undo_push(); 
     int nx = dinoX, ny = dinoY;
     if (!strcmp(dir, "UP")) ny--;
     else if (!strcmp(dir, "DOWN")) ny++;
@@ -172,6 +180,7 @@ void cmd_GROW(char *dir) {
 
 // Срубает дерево (&)
 void cmd_CUT(char *dir) {
+    undo_push(); 
     int nx = dinoX, ny = dinoY;
     if (!strcmp(dir, "UP")) ny--;
     else if (!strcmp(dir, "DOWN")) ny++;
@@ -189,6 +198,7 @@ if (nx >= width) nx = 0;
 
 // Создаёт камень (@)
 void cmd_MAKE(char *dir) {
+    undo_push(); 
     int nx = dinoX, ny = dinoY;
     if (!strcmp(dir, "UP")) ny--;
     else if (!strcmp(dir, "DOWN")) ny++;
@@ -206,6 +216,7 @@ void cmd_MAKE(char *dir) {
 
 // Пинает камень (@)
 void cmd_PUSH(char *dir) {
+    undo_push(); 
     int nx = dinoX, ny = dinoY;
     if (!strcmp(dir, "UP")) ny--;
     else if (!strcmp(dir, "DOWN")) ny++;
@@ -391,15 +402,19 @@ int exec_command_line(const char *line, int lineno) {
         }
 
         cmd_JUMP(dir, n);
-    }
+    }else if (!strcmp(cmd, "UNDO")) {
+        if (undo_pop() != 0) {
+            printf("Ошибка: нет состояний для отката.\n");
+        }
 
-    else {
+    }else {
         printf("Ошибка: неизвестная команда '%s'.\n", cmd);
         return -1;
     }
 
     return 0;
 }
+
 
 
 
